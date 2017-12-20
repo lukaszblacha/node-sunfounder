@@ -1,0 +1,92 @@
+<html>
+  <head>
+      <style>
+          body {
+              text-align: center;
+          }
+          #stream {
+              width: 320px;
+              padding-top: 10%;
+          }
+      </style>
+      <script>
+        const actions = {
+          CAMX: 'CAMX',
+          CAMY: 'CAMY',
+          TURN: 'TURN',
+          SPEED: 'SPEED'
+        };
+
+        const defaults = {
+          turn: 0,
+          camx: 0,
+          camy: -0.71,
+          speed: 0
+        };
+
+        const state = Object.assign({}, defaults);
+
+        let ws = {};
+      </script>
+      <script>
+        const sendCommand = command => ws.send(JSON.stringify(command));
+        const camx = (value) => sendCommand({ action: actions.CAMX, params: { value } });
+        const camy = (value) => sendCommand({ action: actions.CAMY, params: { value } });
+        const turn = (value) => sendCommand({ action: actions.TURN, params: { value } });
+        const speed = (value) => sendCommand({ action: actions.SPEED, params: { value } });
+        const handleKeyEvent = event => {
+          if (event.type === 'keyup') {
+            switch (event.key) {
+              case 'w':
+              case 's':
+                camy(-0.71);
+                break;
+              case 'a':
+              case 'd':
+                camx(0);
+                break;
+              case 'ArrowUp':
+              case 'ArrowDown':
+                speed(0);
+                break;
+              case 'ArrowLeft':
+              case 'ArrowRight':
+                turn(0);
+                break;
+            }
+          } else if (event.type === 'keydown') {
+            switch (event.key) {
+              case 'w': camy(1); break;
+              case 's': camy(-1); break;
+              case 'a': camx(1); break;
+              case 'd': camx(-1); break;
+              case 'ArrowUp': speed(1); break;
+              case 'ArrowDown': speed(-1); break;
+              case 'ArrowLeft': turn(-1); break;
+              case 'ArrowRight': turn(1); break;
+            }
+          }
+        };
+      </script>
+  </head>
+  <body>
+    <script>
+      createSocket = (addr) => {
+        ws = new WebSocket(addr, 'protocolOne');
+
+        ws.onopen = () => {
+          ws.onclose = () => createSocket(addr);
+        };
+
+        ws.onerror = () => setTimeout(() => createSocket(addr), 1000);
+      };
+
+      createSocket('ws://172.16.42.5:1337');
+      document.body.onkeydown = document.body.onkeyup = handleKeyEvent;
+
+    </script>
+    <img src="http://172.16.42.5:8080/?action=stream" id="stream" />
+    <div>Camera controls: WSAD</div>
+    <div>Car controls: arrow keys</div>
+  </body>
+</html>

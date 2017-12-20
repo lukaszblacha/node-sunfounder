@@ -1,0 +1,29 @@
+{
+  "turnServo": {
+    "pwmChannel": 0,
+    "range": 100,
+    "center": 400
+  },
+  "camOXServo": {
+    "pwmChannel": 14,
+    "range": 190,
+    "center": 380
+  },
+  "camOYServo": {
+    "pwmChannel": 15,
+    "range": 200,
+    "center": 500
+  },
+  "motor0": {
+    "gpioPin0": 11,
+    "gpioPin1": 12,
+    "pwmChannel": 4,
+    "invert": false
+  },
+  "motor1": {
+    "gpioPin0": 13,
+    "gpioPin1": 15,
+    "pwmChannel": 5,
+    "invert": false
+  }
+}
